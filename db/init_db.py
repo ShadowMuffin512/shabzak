@@ -9,9 +9,9 @@ def init_db():
         
 
 def set_assignment_scores(session: SessionType):
-    found_assignment_scores = {r[0] for r in session.query(AssignmentScore).all()}
+    found_assignment_scores = session.query(AssignmentScore).all()
     needed_assignment_scores = set(enums.Assignment.__members__.keys())
-    missing_keys = needed_assignment_scores - found_assignment_scores
+    missing_keys = needed_assignment_scores - set([assignment.assignment for assignment in found_assignment_scores])
     for key in missing_keys:
         score = enums.DEFAULT_ASSIGNMENT_SCORES[enums.Assignment[key]]
         session.add(AssignmentScore(assignment=key, score=score))

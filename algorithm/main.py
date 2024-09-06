@@ -42,11 +42,6 @@ COMMANDER_DISALLOWED_ASSIGNMENTS = [
 ]
 
 
-"""
-    TODO: add recursion
-"""
-
-
 def calculate_main_days(
     team: Team, timetable: Timetable, start_date: date, num_days: int
 ) -> List[Day]:
@@ -82,9 +77,9 @@ def calculate_main_day(
 
     with DBSession() as session:
         prev_days += (
-            session.query(BCPDay)
-            .filter(BCPDay.timetable_id == timetable.id, BCPDay.created_at >= one_week_ago)
-            .order_by(desc(BCPDay.created_at))
+            session.query(Day)
+            .filter(Day.timetable_id == timetable.id, Day.created_at >= one_week_ago)
+            .order_by(desc(Day.created_at))
             .all()
         )
 
@@ -99,7 +94,7 @@ def calculate_main_day(
     # Assignments and score updates
     for soldier in soldiers:
         assignment = calculate_day_assignment_for_soldier(
-            assignment_scores, soldier, scores, assignments_to_fill, locked_assignments
+            assignment_scores, team, soldier, scores, assignments_to_fill, locked_assignments
         )
         # Update the score based on the assignment
         model_actions.update_score_after_assignment(
@@ -138,7 +133,10 @@ def filter_preexisting_assignments(
 
 
 def calculate_day_assignment_for_soldier(
+    last_night_soldier: Soldier,
+    consecutive_nights: int,
     assignment_scores: List[AssignmentScore],
+    team: Team,
     soldier: Soldier,
     scores: List[Score],
     assignments_to_fill: List[enums.Assignment],
@@ -148,10 +146,20 @@ def calculate_day_assignment_for_soldier(
         return next(
             assignment for assignment in locked_assignments if assignment.soldier_id == soldier.id
         )
-
-    sorted_scores = sorted(scores, key=lambda score: score.score)
-
-    return DaySoldierAssignment(  # Dummy assignment, you would have your own logic here
+    selected_assignnment: enums.Assignment = DEFAULT_ASSIGNMENT
+    sorted_scoretable = sorted(scores, key=lambda score: score.score)
+    prospective_score = get_score_for_soldier(scores, soldier)
+    allowed_assignments_for_soldier = [
+        assignment for assignment in enums.Assignment
+        if (soldier.is_commander and assignment not in COMMANDER_DISALLOWED_ASSIGNMENTS) or not soldier.is_commander
+    ]
+    if (team.min_consecutive_nights > consecutive_nights and last_night_soldier.id == soldier.id):
+        selected_assignnment = enums.Assignment.Night
+    else:
+        
+    prospective_score += next([score for score in assignment_scores if score.assigmnent == enums.Assignment.Night]).score
+    
+    return DaySoldierAssignment(
         soldier_id=soldier.id,
-        assignment=assignments_to_fill[0],  # Pick the first available assignment for simplicity
+        assignment=selected_assignnment.name
     )

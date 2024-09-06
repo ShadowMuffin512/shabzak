@@ -76,7 +76,7 @@ class DaySoldierAssignment(Base):
     soldier = relationship('Soldier', back_populates='day_soldier_assignments')
     day_id = Column(Integer, ForeignKey('days.id'))
     day = relationship('Day', back_populates='day_soldier_assignments')
-    assignment = Column(Enum(enums.Assignment))
+    assignment = Column(Enum(enums.Assignment), nullable=False)
     extra_assignment_text = Column(String, default='')
     assignment_location = Column(Enum(enums.AssignmentLocation), default='Shalar')
 
