@@ -22,7 +22,7 @@ def get_scores_for_team(team_id: str) -> Dict:
 def get_score_for_soldier(soldier_id: str) -> Dict:
     try:
         with DBSession() as session:
-            score = session.query(Score).filter(Score.soldier_id == soldier_id).first()
+            score = session.query(Score).join(Soldier).filter(Soldier.id == soldier_id).first()
             if not score:
                 return {
                     "status": "error",
@@ -38,7 +38,7 @@ def get_score_for_soldier(soldier_id: str) -> Dict:
 def override_score_for_soldier(soldier_id: str, new_score: int) -> Dict:
     try:
         with DBSession() as session:
-            score = session.query(Score).filter(Score.soldier_id == soldier_id).first()
+            score = session.query(Score).join(Soldier).filter(Soldier.id == soldier_id).first()
             if not score:
                 return {
                     "status": "error",

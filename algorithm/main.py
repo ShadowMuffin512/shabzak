@@ -170,8 +170,9 @@ class ShabzakEngine:
             new_day = Day(
                 date=date_to_calculate,
                 timetable_id=self.timetable.id,
-                day_soldier_assignments=day_assignments,
             )
+            for day_assignment in day_assignments:
+                day_assignment.day = new_day
             self.calculated_days.append(new_day)
             new_calculated_days.append(new_day)
         return new_calculated_days

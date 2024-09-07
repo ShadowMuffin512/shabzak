@@ -16,7 +16,11 @@ def get_day_soldier_assignments(day_id: str) -> Dict:
             day = session.query(Day).filter(Day.id == day_id).first()
             if not day:
                 return {"status": "error", "error": f"Day with ID {day_id} not found"}
-            assignments = day.day_soldier_assignments
+            assignments = (
+                session.query(DaySoldierAssignment)
+                .filter(DaySoldierAssignment.day_id == day.id)
+                .all()
+            )
             assignments_data = [model_to_dict(assignment) for assignment in assignments]
             return {"status": "success", "data": assignments_data}
     except Exception as e:

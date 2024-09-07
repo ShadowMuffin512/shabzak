@@ -53,7 +53,11 @@ class BCPEngine:
             ) or []
             main_day = session.query(Day).filter(Day.date == day_to_calculate).first()
             if main_day:
-                main_day_soldier_assignments = main_day.day_soldier_assignments
+                main_day_soldier_assignments = (
+                    session.query(DaySoldierAssignment)
+                    .filter(DaySoldierAssignment.day_id == main_day.id)
+                    .all()
+                )
         eligible_soldiers = self.filter_soldiers_with_allowing_assignments(
             main_day_soldier_assignments, self.soldiers
         )

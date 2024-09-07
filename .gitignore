@@ -1,4 +1,6 @@
 # Byte-compiled / optimized / DLL files
+temp-svelte-test/
+sqlite-gui
 __pycache__/
 *.py[cod]
 *$py.class

@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, List
 
 from eel import expose
 
@@ -14,7 +14,9 @@ def get_soldiers_for_team(team_id: str) -> Dict:
             team = session.query(Team).filter(Team.id == team_id).first()
             if not team:
                 return {"status": "error", "error": f"Team with ID {team_id} not found"}
-            soldiers = team.soldiers
+            soldiers: List[Soldier] = (
+                session.query(Soldier).filter(Soldier.team_id == team.id).all()
+            )
             soldiers_data = [model_to_dict(soldier) for soldier in soldiers]
             return {"status": "success", "data": soldiers_data}
     except Exception as e:
