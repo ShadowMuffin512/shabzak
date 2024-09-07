@@ -281,15 +281,6 @@ class ShabzakEngine:
         ):
             available_assignments = [enums.Assignment.DayAndNight]
 
-        available_assignments = [
-            assignment
-            for assignment in enums.Assignment
-            if (
-                soldier.is_commander
-                and assignment not in ShabzakEngine.commander_disallowed_assignments
-            )
-            or not soldier.is_commander
-        ]
         if self.team.allow_guard_to_hold_shift:
             available_assignments = self.filter_guard_shifts(
                 available_assignments, weekend_or_weekday
