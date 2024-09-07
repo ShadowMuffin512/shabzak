@@ -2,8 +2,6 @@ from copy import deepcopy
 from datetime import date, datetime, timedelta
 from typing import Dict, List, Optional, Self
 
-from sqlalchemy import desc
-
 import utils
 from db import DBSession
 from db.models import (
@@ -88,7 +86,7 @@ class ShabzakEngine:
         return [item for item in assignments_to_fill if item not in filled_assignment_names]
 
     def get_score_for_soldier(self, soldier: Soldier) -> Score:
-        return next((score for score in self.scores if score.soldier_id == soldier.id))
+        return next((score for score in self.scores if soldier.score_id == score.id))
 
     def sort_soldiers_by_score(self) -> List[Soldier]:
         return sorted(self.soldiers, key=lambda soldier: self.get_score_for_soldier(soldier).score)

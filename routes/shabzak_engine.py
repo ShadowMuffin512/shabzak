@@ -1,6 +1,6 @@
 from typing import Any, Dict
 
-from dateutil import parser
+import dateutil.parser
 from eel import expose
 
 from algorithm.bcp import BCPEngine
@@ -18,7 +18,7 @@ def get_prospective_future_assignments(team_id: str, start_date_str: str, num_da
             team = session.query(Team).filter(Team.id == team_id).first()
             if not team:
                 raise exceptions.NotFound(f"Team not found with ID {team_id}")
-            start_date = parser.isoparse(start_date_str)
+            start_date = dateutil.parser.isoparse(start_date_str).date()
             shabzak_engine = ShabzakEngine(team)
             result = shabzak_engine.calculate_days(start_date, num_days)
             return {"status": "success", "result": [model_to_dict(day) for day in result]}
@@ -34,7 +34,7 @@ def commit_prospective_assignments(data: Dict[str, Any]) -> Dict[str, Any]:
 
             for day_data in days_data:
                 day_id = day_data.get("id")
-                day_date = day_data.get("date")
+                day_date = dateutil.parser.isoparse(day_data.get("date")).date()
                 assignments = day_data.get("day_soldier_assignments", [])
 
                 day = session.query(Day).filter(Day.id == day_id).first()
@@ -82,7 +82,7 @@ def get_prospective_bcp_future_assignments(
             team = session.query(Team).filter(Team.id == team_id).first()
             if not team:
                 raise exceptions.NotFound(f"Team not found with ID {team_id}")
-            start_date = parser.isoparse(start_date_str)
+            start_date = dateutil.parser.isoparse(start_date_str).date()
             bcp_engine = BCPEngine(team)
             result = bcp_engine.calculate_bcp_days(start_date, num_days)
             return {"status": "success", "result": [model_to_dict(bcp_day) for bcp_day in result]}

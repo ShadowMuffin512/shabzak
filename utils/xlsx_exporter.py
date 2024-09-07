@@ -1,3 +1,5 @@
+import datetime
+import os
 from typing import Any, Dict, List
 
 import openpyxl
@@ -30,12 +32,23 @@ class XlsxExporter:
     timetableHeaderRowColor = "a84300"
     nameColumnColor = "a84300"
     bcpRowColor = "e1bb40"
+    workbook_log_location = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../workbooks")
 
     def __init__(self, team_ids: List[str]):
         self.workbook = openpyxl.Workbook()
         self.teams: List[Team] = model_actions.get_teams_from_ids(team_ids)
         self.export_data_structure: Dict[str, Any] = {team.name: {} for team in self.teams}
+        self.create_worksheets()
 
     def create_worksheets(self):
         for i, team in enumerate(self.teams):
             self.workbook.create_sheet(team.name, i)
+
+    def export_workbook_to_file(self):
+        self.workbook.save(
+            os.path.join(XlsxExporter.workbook_log_location, XlsxExporter.generate_workbook_name())
+        )
+
+    @staticmethod
+    def generate_workbook_name():
+        return f"shabzak-{datetime.datetime.now().isoformat()}"

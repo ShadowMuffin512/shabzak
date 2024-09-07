@@ -1,6 +1,7 @@
 from copy import deepcopy
 from typing import Dict, Optional
 
+import dateutil.parser
 from eel import expose
 
 from db import DBSession
@@ -65,7 +66,8 @@ def add_day_soldier_assignment(assignment_data: Dict) -> Dict:
                     return {"status": "error", "error": f"Day with ID {day_id} not found"}
             else:
                 day = Day(
-                    date=assignment_data["date"], timetable_id=assignment_data["timetable_id"]
+                    date=dateutil.parser.isoparse(assignment_data["date"]).date(),
+                    timetable_id=assignment_data["timetable_id"],
                 )
             assignment = DaySoldierAssignment(**assignment_data["assignment"], day=day)
             soldier_score: Score = model_actions.get_soldier_score_from_assignment(assignment)
