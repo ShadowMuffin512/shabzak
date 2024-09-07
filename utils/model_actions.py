@@ -10,6 +10,16 @@ from utils import enums, exceptions
 orderFunc = Callable[[Any], Any]
 
 
+def get_teams_from_ids(ids: List[str]) -> List[Team]:
+    with DBSession() as session:
+        teams = session.query(Team).filter(Team.id.in_(ids)).all()
+        if len(teams) != len(ids):
+            raise exceptions.NotFound(
+                f'Some of the teams are missing from the IDs - {",".join(ids)}'
+            )
+        return teams
+
+
 def get_updated_score_after_assignment_update(
     assignment: DaySoldierAssignment,
     prev_assignment: Optional[DaySoldierAssignment],

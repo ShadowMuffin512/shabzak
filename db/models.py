@@ -65,7 +65,7 @@ class Soldier(Base):
 class Team(Base):
     __tablename__ = "teams"
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    name = Column(String)
+    name = Column(String, nullable=False)
     min_consecutive_nights = Column(Integer, default=1)
     allow_guard_to_hold_shift = Column(Boolean, default=False)
     commanders_do_weekends = Column(Boolean, default=False)
