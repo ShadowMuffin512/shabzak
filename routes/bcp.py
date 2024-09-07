@@ -1,13 +1,13 @@
 from typing import Dict, List
 
-import eel
+from eel import expose
 
 from db import DBSession
 from db.models import BCPDay, BCPTimetable
 from utils.model_to_dict import model_to_dict
 
 
-@eel.expose
+@expose
 def get_bcp_days() -> Dict:
     try:
         with DBSession() as session:
@@ -18,7 +18,7 @@ def get_bcp_days() -> Dict:
         return {"status": "error", "error": str(e)}
 
 
-@eel.expose
+@expose
 def get_bcp_day(bcp_day_id: str) -> Dict:
     try:
         with DBSession() as session:
@@ -31,7 +31,7 @@ def get_bcp_day(bcp_day_id: str) -> Dict:
         return {"status": "error", "error": str(e)}
 
 
-@eel.expose
+@expose
 def add_bcp_day(bcp_day_data: Dict) -> Dict:
     try:
         with DBSession() as session:
@@ -55,7 +55,7 @@ def add_bcp_day(bcp_day_data: Dict) -> Dict:
         return {"status": "error", "error": str(e)}
 
 
-@eel.expose
+@expose
 def update_bcp_day(bcp_day_id: str, bcp_day_data: Dict) -> Dict:
     try:
         with DBSession() as session:
@@ -74,7 +74,7 @@ def update_bcp_day(bcp_day_id: str, bcp_day_data: Dict) -> Dict:
         return {"status": "error", "error": str(e)}
 
 
-@eel.expose
+@expose
 def delete_bcp_day(bcp_day_id: str) -> Dict:
     try:
         with DBSession() as session:
